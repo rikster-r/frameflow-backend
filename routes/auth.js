@@ -4,13 +4,13 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const Encrypt = require('../lib/encrypt');
 const User = require('../models/user');
+const { z } = require('zod');
 
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
       return res.status(400).json({
-        err,
-        info,
+        message: err?.message ?? info?.message,
       });
     }
 
@@ -26,10 +26,39 @@ router.post('/login', function (req, res, next) {
   })(req, res);
 });
 
-router.post('/register', async function (req, res, next) {
-  const { publicName, username, password } = req.body;
+const schema = z.object({
+  body: z.object({
+    username: z
+      .string({ required_error: 'Username is required' })
+      .min(1)
+      .refine(
+        async val => {
+          const user = await User.findOne({ username: val });
+          return user === null;
+        },
+        {
+          message: 'Username is already taken',
+        }
+      ),
+    password: z.string({ required_error: 'Password is required' }).min(1),
+  }),
+});
 
-  //todo validation
+const validate = schema => async (req, res, next) => {
+  try {
+    await schema.parseAsync({
+      body: req.body,
+      query: req.query,
+      params: req.params,
+    });
+    return next();
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+};
+
+router.post('/register', validate(schema), async function (req, res, next) {
+  const { publicName, username, password } = req.body;
 
   // add to database
   const user = new User({
@@ -56,7 +85,6 @@ router.post('/register', async function (req, res, next) {
       });
     })
     .catch(err => {
-      console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
 });
