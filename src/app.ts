@@ -1,9 +1,10 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-require('dotenv').config();
+import express, { type Request, type Response } from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import createError, { type HttpError } from 'http-errors';
+import logger from 'morgan';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 
@@ -14,22 +15,19 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Mongo DB connection
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+import mongoose from 'mongoose';
+mongoose.connect(process.env.MONGODB_URI as string);
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //passport setup
-const passport = require('passport');
+import passport from 'passport';
 app.use(passport.initialize());
 require('./lib/passport');
 
 // routes
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const authRouter = require('./routes/auth');
+import indexRouter from './routes/index';
+import usersRouter from './routes/users';
+import authRouter from './routes/auth';
 
 app.use('/', indexRouter);
 app.use('/users', passport.authenticate('jwt', { session: false }), usersRouter);
@@ -41,7 +39,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err: HttpError, req: Request, res: Response) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -51,4 +49,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+export default app;

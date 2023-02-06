@@ -1,25 +1,25 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/user');
-const Encrypt = require('../lib/encrypt');
-
-const passportJWT = require('passport-jwt');
-const JWTStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import User, { IUserModel } from '../models/User';
+import Encrypt from './encrypt';
+import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
 
 passport.use(
   new JWTStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
     function (jwtPayload, cb) {
       //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
       return User.findOne({ _id: jwtPayload._id })
-        .then(user => {
-          return cb(null, user);
+        .then((user: IUserModel | null) => {
+          if (user) {
+            return cb(null, user);
+          }
+          return cb(null, false, { message: 'User not found' });
         })
-        .catch(err => {
+        .catch((err: Error) => {
           return cb(err);
         });
     }
@@ -42,6 +42,6 @@ passport.use(
 
         return cb(null, user, { message: 'Logged in successfully' });
       })
-      .catch(err => cb(err));
+      .catch((err: Error) => cb(err));
   })
 );
