@@ -31,7 +31,7 @@ passport.use(
     User.findOne({ username })
       .then(async user => {
         if (!user) {
-          return cb(null, false, { message: "User doesn't exist" });
+          return cb(null, false, { message: "This user doesn't exist" });
         }
 
         const isPasswordValid = await Encrypt.comparePassword(password, user.password);
