@@ -36,7 +36,7 @@ import usersRouter from './routes/users';
 import authRouter from './routes/auth';
 
 app.use('/', indexRouter);
-app.use('/users', passport.authenticate('jwt', { session: false }), usersRouter);
+app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler

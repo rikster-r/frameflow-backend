@@ -92,7 +92,7 @@ router.post('/login', validate(loginSchema), function (req, res, next) {
 
       // generate a signed json web token with the contents of user object and return it in the response
       const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET as string);
-      return res.json({ user, token });
+      return res.json({ token });
     });
   })(req, res);
 });
@@ -121,7 +121,7 @@ router.post('/register', validate(registerSchema), async function (req, res, nex
 
         // generate a signed json web token with the contents of user object and return it in the response
         const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET as string);
-        return res.status(201).json({ user, token });
+        return res.status(201).json({ token });
       });
     })
     .catch(err => {
