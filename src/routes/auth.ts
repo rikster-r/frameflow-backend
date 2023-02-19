@@ -47,7 +47,7 @@ const validate =
     }
   };
 
-router.post('/login', validate(loginSchema), function (req, res, next) {
+router.post('/login', validate(loginSchema), function (req, res) {
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
       /* 
@@ -97,7 +97,7 @@ router.post('/login', validate(loginSchema), function (req, res, next) {
   })(req, res);
 });
 
-router.post('/register', validate(registerSchema), async function (req, res, next) {
+router.post('/register', validate(registerSchema), async function (req, res) {
   const { publicName, username, password } = req.body;
 
   // add to database
@@ -124,7 +124,7 @@ router.post('/register', validate(registerSchema), async function (req, res, nex
         return res.status(201).json({ token });
       });
     })
-    .catch(err => {
+    .catch(() => {
       res.status(500).json({ message: 'Internal server error' });
     });
 });

@@ -8,6 +8,7 @@ interface IUser {
   follows: Types.ObjectId[];
   visited: Types.ObjectId[];
   savedPosts: Types.ObjectId[];
+  createdAt: Date;
 }
 
 export interface IUserModel extends IUser, Document {}
@@ -20,6 +21,7 @@ const UserSchema = new Schema<IUser>({
   follows: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   visited: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   savedPosts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+  createdAt: { type: Date, default: Date.now },
 });
 
 const User = (models.User as Model<IUser>) || model('User', UserSchema);
