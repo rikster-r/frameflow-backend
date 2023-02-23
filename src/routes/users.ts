@@ -1,16 +1,21 @@
 import { Router } from 'express';
-const router = Router();
 import passport from 'passport';
 import * as usersController from '../controllers/usersController';
 
-/* GET users listing. */
-router.get('/');
+const router = Router();
 
-/* GET user profile. */
 router.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
   usersController.getProfile
 );
+
+router.get('/', usersController.getAll);
+
+router.get('/:username', usersController.getUser);
+
+router.get('/:username/posts', usersController.getPosts);
+
+router.get('/:username/subscribers', usersController.getSubscribers);
 
 export default router;
