@@ -5,10 +5,12 @@ import createError, { type HttpError } from 'http-errors';
 import logger from 'morgan';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import helmet from 'helmet';
 dotenv.config();
 
 const app = express();
 
+app.use(helmet());
 app.use(
   cors({
     origin: '*',
