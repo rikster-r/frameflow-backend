@@ -1,5 +1,6 @@
 import { type Request, type Response } from 'express';
 import Post from '../models/Post';
+import Comment from '../models/Comment';
 import formidable from 'formidable';
 import cloudinary from '../lib/cloudinary';
 import { IUserModel } from '../models/User';
@@ -18,6 +19,8 @@ const fieldsSchema = z.object({
       { message: 'Invalid file type. Only PNG and JPEG images are supported' }
     ),
 });
+
+const commentSchema = z.string().trim().min(1);
 
 export const getAll = (req: Request, res: Response) => {
   Post.find()
@@ -54,7 +57,7 @@ export const createPost = async (req: Request, res: Response) => {
 
   // validate
   try {
-    await fieldsSchema.parse(fields);
+    fieldsSchema.parse(fields);
   } catch (err) {
     return res.status(400).json(err);
   }
@@ -89,6 +92,51 @@ export const createPost = async (req: Request, res: Response) => {
     .save()
     .then(post => {
       return res.status(201).json(post);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+export const getOne = (req: Request, res: Response) => {
+  Post.findById(req.params.id)
+    .then(post => {
+      return res.status(200).json(post);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+export const getPostComments = (req: Request, res: Response) => {
+  Comment.find({ post: req.params.id })
+    .sort({ timestamp: 'descending' })
+    .then(comments => {
+      return res.status(200).json(comments);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+export const addComment = (req: Request, res: Response) => {
+  try {
+    commentSchema.parse(req.body.text);
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+
+  const comment = new Comment({
+    author: (req.user as IUserModel)._id,
+    post: req.params.id,
+    text: req.body.text,
+    likedBy: [],
+  });
+
+  comment
+    .save()
+    .then(comment => {
+      return res.status(201).json(comment);
     })
     .catch(err => {
       return res.status(500).json(err);
