@@ -110,6 +110,7 @@ export const getOne = (req: Request, res: Response) => {
 
 export const getPostComments = (req: Request, res: Response) => {
   Comment.find({ post: req.params.id })
+    .populate('author')
     .sort({ timestamp: 'descending' })
     .then(comments => {
       return res.status(200).json(comments);
@@ -119,7 +120,7 @@ export const getPostComments = (req: Request, res: Response) => {
     });
 };
 
-export const addComment = (req: Request, res: Response) => {
+export const addComment = async (req: Request, res: Response) => {
   try {
     commentSchema.parse(req.body.text);
   } catch (err) {
@@ -133,12 +134,17 @@ export const addComment = (req: Request, res: Response) => {
     likedBy: [],
   });
 
-  comment
-    .save()
-    .then(comment => {
-      return res.status(201).json(comment);
-    })
-    .catch(err => {
-      return res.status(500).json(err);
+  try {
+    let comment = await Comment.create({
+      author: (req.user as IUserModel)._id,
+      post: req.params.id,
+      text: req.body.text,
+      likedBy: [],
     });
+
+    comment = await comment.populate('author');
+    return res.status(201).json(comment);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
