@@ -36,10 +36,12 @@ require('./lib/passport');
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
 import postsRouter from './routes/posts';
+import commentsRouter from './routes/comments';
 
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/posts', postsRouter);
+app.use('/comments', commentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
