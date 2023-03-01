@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express';
 import User from '../models/User';
 import Post from '../models/Post';
+import { userInfo } from 'os';
 
 export const getProfile = (req: Request, res: Response) => {
   return res.status(200).json(req.user);
@@ -48,6 +49,18 @@ export const getSubscribers = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+};
+
+export const getSavedPosts = (req: Request, res: Response) => {
+  User.findOne({ username: req.params.username })
+    .populate('savedPosts')
+    .then(user => {
+      if (!user) return res.status(400).json('No such user exists');
+      return res.status(200).json(user.savedPosts);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
 };
 
 export const updateSavedList = (req: Request, res: Response) => {
