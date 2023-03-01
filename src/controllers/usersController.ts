@@ -49,3 +49,13 @@ export const getSubscribers = async (req: Request, res: Response) => {
     return res.status(500).json(err);
   }
 };
+
+export const updateSavedList = (req: Request, res: Response) => {
+  User.findByIdAndUpdate(req.params.id, { savedPosts: req.body.savedPosts })
+    .then(data => {
+      return res.status(200).json(data);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};

@@ -14,6 +14,12 @@ router.get('/', usersController.getAll);
 
 router.get('/:username', usersController.getUser);
 
+router.put(
+  '/:id/saved',
+  passport.authenticate('jwt', { session: false }),
+  usersController.updateSavedList
+);
+
 router.get('/:username/posts', usersController.getPosts);
 
 router.get('/:username/subscribers', usersController.getSubscribers);
