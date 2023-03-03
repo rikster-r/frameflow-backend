@@ -105,6 +105,18 @@ export const getOne = (req: Request, res: Response) => {
     });
 };
 
+export const getLikes = (req: Request, res: Response) => {
+  Post.findById(req.params.id)
+    .populate('likedBy')
+    .then(post => {
+      if (!post) return res.status(200).json([]);
+      return res.status(200).json(post.likedBy);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const updatePostLikesField = (req: Request, res: Response) => {
   Post.findByIdAndUpdate(req.params.id, { likedBy: req.body.likedBy })
     .then(data => {

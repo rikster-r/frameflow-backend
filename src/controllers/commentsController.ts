@@ -39,6 +39,18 @@ export const addComment = async (req: Request, res: Response) => {
   }
 };
 
+export const getLikes = (req: Request, res: Response) => {
+  Comment.findById(req.params.id)
+    .populate('likedBy')
+    .then(comment => {
+      if (!comment) return res.status(200).json([]);
+      return res.status(200).json(comment.likedBy);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const updateCommentLikesField = (req: Request, res: Response) => {
   Comment.findByIdAndUpdate(req.params.id, { likedBy: req.body.likedBy })
     .then(data => {
