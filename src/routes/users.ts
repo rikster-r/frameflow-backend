@@ -23,6 +23,6 @@ router.put(
 
 router.get('/:username/posts', usersController.getPosts);
 
-router.get('/:username/subscribers', usersController.getSubscribers);
+router.get('/:username/followers', usersController.getFollowers);
 
 export default router;

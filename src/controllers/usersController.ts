@@ -32,20 +32,20 @@ export const getPosts = async (req: Request, res: Response) => {
     const user = await User.findOne({ username: req.params.username });
     if (!user) return res.status(400).json({ message: 'No such user exists' });
 
-    const posts = await Post.find({ author: user._id }).sort({ timestamp: 'descending' });
+    const posts = await Post.find({ author: user._id }).sort({ createdAt: 'descending' });
     return res.status(200).json(posts);
   } catch (err) {
     return res.status(500).json(err);
   }
 };
 
-export const getSubscribers = async (req: Request, res: Response) => {
+export const getFollowers = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ username: req.params.username });
     if (!user) return res.status(400).json({ message: 'No such user exists' });
 
-    const subscribers = await User.find({ follows: user._id });
-    return res.status(200).json(subscribers);
+    const followers = await User.find({ follows: user._id });
+    return res.status(200).json(followers);
   } catch (err) {
     return res.status(500).json(err);
   }

@@ -5,18 +5,19 @@ interface IPost {
   images: string[];
   text: string;
   likedBy: Types.ObjectId[];
-  timestamp: Date;
 }
 
 export interface IPostModel extends IPost, Document {}
 
-const PostSchema = new Schema<IPost>({
-  author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  images: [{ type: String, required: true }],
-  text: { type: String },
-  likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  timestamp: { type: Date, default: Date.now },
-});
+const PostSchema = new Schema<IPost>(
+  {
+    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    images: [{ type: String, required: true }],
+    text: { type: String },
+    likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  },
+  { timestamps: true }
+);
 
 const Post = (models.Post as Model<IPost>) || model('Post', PostSchema);
 
