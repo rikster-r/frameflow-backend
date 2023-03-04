@@ -21,6 +21,8 @@ router.put(
   usersController.updateSavedList
 );
 
+router.put('/:id/follows', usersController.updateFollowsList);
+
 router.get('/:username/posts', usersController.getPosts);
 
 router.get('/:username/followers', usersController.getFollowers);

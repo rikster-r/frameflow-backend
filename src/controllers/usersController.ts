@@ -71,3 +71,13 @@ export const updateSavedList = (req: Request, res: Response) => {
       return res.status(500).json(err);
     });
 };
+
+export const updateFollowsList = (req: Request, res: Response) => {
+  User.findByIdAndUpdate(req.params.id, { follows: req.body.follows })
+    .then(data => {
+      return res.status(200).json(data);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
