@@ -105,6 +105,16 @@ export const getOne = (req: Request, res: Response) => {
     });
 };
 
+export const deleteOne = (req: Request, res: Response) => {
+  Post.deleteOne({ _id: req.params.id })
+    .then(() => {
+      return res.status(200).json({ message: 'Successfully deleted post' });
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const getLikes = (req: Request, res: Response) => {
   Post.findById(req.params.id)
     .populate('likedBy')

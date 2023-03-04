@@ -9,6 +9,7 @@ router.get('/', postsController.getAll);
 router.post('/', passport.authenticate('jwt', { session: false }), postsController.createPost);
 
 router.get('/:id', postsController.getOne);
+router.delete('/:id', postsController.deleteOne);
 
 router.get('/:id/likes', postsController.getLikes);
 router.put('/:id/likes', postsController.updatePostLikesField);
