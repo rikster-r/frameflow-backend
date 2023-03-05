@@ -39,6 +39,16 @@ export const addComment = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteComment = (req: Request, res: Response) => {
+  Comment.deleteOne({ _id: req.params.id })
+    .then(() => {
+      return res.status(204).send();
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const getLikes = (req: Request, res: Response) => {
   Comment.findById(req.params.id)
     .populate('likedBy')

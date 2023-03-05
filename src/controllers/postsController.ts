@@ -108,7 +108,7 @@ export const getOne = (req: Request, res: Response) => {
 export const deleteOne = (req: Request, res: Response) => {
   Post.deleteOne({ _id: req.params.id })
     .then(() => {
-      return res.status(200).json({ message: 'Successfully deleted post' });
+      return res.status(204).send();
     })
     .catch(err => {
       return res.status(500).json(err);
