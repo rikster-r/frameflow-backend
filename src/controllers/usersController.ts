@@ -50,6 +50,17 @@ export const getFollowers = async (req: Request, res: Response) => {
   }
 };
 
+export const getFollowing = (req: Request, res: Response) => {
+  User.findOne({ username: req.params.username })
+    .then(user => {
+      if (!user) return res.status(200).json([]);
+      return res.status(200).json(user.follows);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const getSavedPosts = (req: Request, res: Response) => {
   User.findOne({ username: req.params.username })
     .populate('savedPosts')
