@@ -52,6 +52,7 @@ export const getFollowers = async (req: Request, res: Response) => {
 
 export const getFollowing = (req: Request, res: Response) => {
   User.findOne({ username: req.params.username })
+    .populate('follows')
     .then(user => {
       if (!user) return res.status(200).json([]);
       return res.status(200).json(user.follows);
