@@ -6,6 +6,18 @@ export const getProfile = (req: Request, res: Response) => {
   return res.status(200).json(req.user);
 };
 
+export const getSearchResults = (req: Request, res: Response) => {
+  if (!req.query) return res.status(400).json({ message: 'Search parameters required' });
+
+  User.find({ username: new RegExp(req.query.username as string, 'i') })
+    .then(users => {
+      return res.status(200).json(users);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const getAll = (req: Request, res: Response) => {
   User.find()
     .then(users => {

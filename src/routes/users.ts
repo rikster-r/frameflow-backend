@@ -10,6 +10,8 @@ router.get(
   usersController.getProfile
 );
 
+router.get('/search', usersController.getSearchResults);
+
 router.get('/', usersController.getAll);
 
 router.get('/:username', usersController.getUser);
@@ -28,7 +30,7 @@ router.get('/:username/following', usersController.getFollowing);
 
 router.put('/:id/follows', usersController.updateFollowsList);
 
-
 router.get('/:username/posts', usersController.getPosts);
+
 
 export default router;
