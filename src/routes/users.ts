@@ -32,5 +32,8 @@ router.put('/:id/follows', usersController.updateFollowsList);
 
 router.get('/:username/posts', usersController.getPosts);
 
+router.get('/:username/visited', usersController.getVisited);
+
+router.put('/:id/visited', usersController.updateVisitedList);
 
 export default router;

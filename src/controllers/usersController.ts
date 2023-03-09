@@ -10,6 +10,7 @@ export const getSearchResults = (req: Request, res: Response) => {
   if (!req.query) return res.status(400).json({ message: 'Search parameters required' });
 
   User.find({ username: new RegExp(req.query.username as string, 'i') })
+    .limit(10)
     .then(users => {
       return res.status(200).json(users);
     })
@@ -103,5 +104,27 @@ export const updateFollowsList = (req: Request, res: Response) => {
     })
     .catch(err => {
       return res.status(500).json(err);
+    });
+};
+
+export const getVisited = (req: Request, res: Response) => {
+  User.findOne({ username: req.params.username })
+    .populate('visited')
+    .then(user => {
+      if (!user) return res.status(400).json('No such user exists');
+      return res.status(200).json(user.visited);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+export const updateVisitedList = (req: Request, res: Response) => {
+  User.findByIdAndUpdate(req.params.id, { visited: req.body.visited })
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(err => {
+      res.status(500).json(err);
     });
 };
