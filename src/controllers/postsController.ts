@@ -30,6 +30,22 @@ export const getAll = (req: Request, res: Response) => {
     });
 };
 
+export const getLatest = (req: Request, res: Response) => {
+  const page = Math.max(0, Number(req.query.page));
+
+  Post.find()
+    .limit(20)
+    .skip(20 * page)
+    .sort({ createdAt: 'descending' })
+    .populate('author')
+    .then(posts => {
+      return res.status(200).json(posts);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const createPost = async (req: Request, res: Response) => {
   const form = formidable({ multiples: true });
 

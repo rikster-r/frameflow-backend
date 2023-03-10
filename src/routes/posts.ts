@@ -8,6 +8,8 @@ const router = Router();
 router.get('/', postsController.getAll);
 router.post('/', passport.authenticate('jwt', { session: false }), postsController.createPost);
 
+router.get('/latest', postsController.getLatest);
+
 router.get('/:id', postsController.getOne);
 router.delete('/:id', postsController.deleteOne);
 
