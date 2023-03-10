@@ -1,5 +1,6 @@
 import { type Request, type Response } from 'express';
 import Post from '../models/Post';
+import User from '../models/User';
 import formidable from 'formidable';
 import cloudinary from '../lib/cloudinary';
 import { IUserModel } from '../models/User';
@@ -131,6 +132,39 @@ export const updatePostLikesField = (req: Request, res: Response) => {
   Post.findByIdAndUpdate(req.params.id, { likedBy: req.body.likedBy })
     .then(data => {
       return res.status(200).json(data);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+export const getUserPosts = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(400).json({ message: 'No such user exists' });
+
+    const posts = await Post.find({ author: user._id })
+      .sort({ createdAt: 'descending' })
+      .populate('author');
+    return res.status(200).json(posts);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
+export const getUserSavedPosts = (req: Request, res: Response) => {
+  User.findOne({ username: req.params.username })
+    .populate({
+      path: 'savedPosts',
+      model: 'Post',
+      populate: {
+        path: 'author',
+        model: 'User',
+      },
+    })
+    .then(user => {
+      if (!user) return res.status(400).json('No such user exists');
+      return res.status(200).json(user.savedPosts);
     })
     .catch(err => {
       return res.status(500).json(err);

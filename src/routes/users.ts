@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import * as usersController from '../controllers/usersController';
+import * as postsController from '../controllers/postsController';
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.get('/', usersController.getAll);
 
 router.get('/:username', usersController.getUser);
 
-router.get('/:username/saved', usersController.getSavedPosts);
+router.get('/:username/saved', postsController.getUserSavedPosts);
 
 router.put(
   '/:id/saved',
@@ -30,7 +31,7 @@ router.get('/:username/following', usersController.getFollowing);
 
 router.put('/:id/follows', usersController.updateFollowsList);
 
-router.get('/:username/posts', usersController.getPosts);
+router.get('/:username/posts', postsController.getUserPosts);
 
 router.get('/:username/visited', usersController.getVisited);
 

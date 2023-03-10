@@ -39,18 +39,6 @@ export const getUser = (req: Request, res: Response) => {
     });
 };
 
-export const getPosts = async (req: Request, res: Response) => {
-  try {
-    const user = await User.findOne({ username: req.params.username });
-    if (!user) return res.status(400).json({ message: 'No such user exists' });
-
-    const posts = await Post.find({ author: user._id }).sort({ createdAt: 'descending' });
-    return res.status(200).json(posts);
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-};
-
 export const getFollowers = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ username: req.params.username });
@@ -75,17 +63,7 @@ export const getFollowing = (req: Request, res: Response) => {
     });
 };
 
-export const getSavedPosts = (req: Request, res: Response) => {
-  User.findOne({ username: req.params.username })
-    .populate('savedPosts')
-    .then(user => {
-      if (!user) return res.status(400).json('No such user exists');
-      return res.status(200).json(user.savedPosts);
-    })
-    .catch(err => {
-      return res.status(500).json(err);
-    });
-};
+
 
 export const updateSavedList = (req: Request, res: Response) => {
   User.findByIdAndUpdate(req.params.id, { savedPosts: req.body.savedPosts })
