@@ -32,10 +32,11 @@ export const getAll = (req: Request, res: Response) => {
 
 export const getLatest = (req: Request, res: Response) => {
   const page = Math.max(0, Number(req.query.page));
+  const perPage = Number(req.query.perPage);
 
   Post.find()
-    .limit(20)
-    .skip(20 * page)
+    .limit(perPage)
+    .skip(perPage * page)
     .sort({ createdAt: 'descending' })
     .populate('author')
     .then(posts => {
