@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express';
 import User from '../models/User';
-import Post from '../models/Post';
+import formidable from 'formidable';
+import cloudinary from '../lib/cloudinary';
 
 export const getProfile = (req: Request, res: Response) => {
   return res.status(200).json(req.user);
@@ -63,8 +64,6 @@ export const getFollowing = (req: Request, res: Response) => {
     });
 };
 
-
-
 export const updateSavedList = (req: Request, res: Response) => {
   User.findByIdAndUpdate(req.params.id, { savedPosts: req.body.savedPosts })
     .then(data => {
@@ -104,5 +103,53 @@ export const updateVisitedList = (req: Request, res: Response) => {
     })
     .catch(err => {
       res.status(500).json(err);
+    });
+};
+
+export const updateAvatar = async (req: Request, res: Response) => {
+  const form = formidable();
+
+  // parse files
+  const avatar: formidable.File = await new Promise(function (resolve, reject) {
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      const image = Array.isArray(files.images) ? files.images[0] : files.images;
+      resolve(image);
+    });
+  });
+
+  const avatarUrl = await cloudinary.uploader
+    .upload(avatar.filepath, {
+      folder: 'frameflow/avatars',
+      resource_type: 'image',
+      public_id: avatar.newFilename,
+    })
+    .then(result => {
+      return result.url;
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+
+  User.findByIdAndUpdate(req.params.id, { avatar: avatarUrl })
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+export const deleteAvatar = (req: Request, res: Response) => {
+  User.findByIdAndUpdate(req.params.id, { $unset: { avatar: 1 } })
+    .then(() => {
+      return res.status(200).send();
+    })
+    .catch(err => {
+      return res.status(500).json(err);
     });
 };

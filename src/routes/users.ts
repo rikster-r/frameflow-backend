@@ -37,4 +37,16 @@ router.get('/:username/visited', usersController.getVisited);
 
 router.put('/:id/visited', usersController.updateVisitedList);
 
+router.put(
+  '/:id/avatar',
+  passport.authenticate('jwt', { session: false }),
+  usersController.updateAvatar
+);
+
+router.delete(
+  '/:id/avatar',
+  passport.authenticate('jwt', { session: false }),
+  usersController.deleteAvatar
+);
+
 export default router;
