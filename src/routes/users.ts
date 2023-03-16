@@ -55,4 +55,10 @@ router.put(
   usersController.updateInfo
 );
 
+router.put(
+  '/:id/password',
+  passport.authenticate('jwt', { session: false }),
+  usersController.updatePassword
+);
+
 export default router;

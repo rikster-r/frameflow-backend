@@ -3,6 +3,7 @@ import User, { IUserModel } from '../models/User';
 import formidable from 'formidable';
 import cloudinary from '../lib/cloudinary';
 import { z } from 'zod';
+import Encrypt from '../lib/encrypt';
 
 export const getProfile = (req: Request, res: Response) => {
   return res.status(200).json(req.user);
@@ -200,4 +201,50 @@ export const updateInfo = async (req: Request, res: Response) => {
     .catch(err => {
       return res.status(500).json(err);
     });
+};
+
+const passwordsSchema = z
+  .object({
+    currentPassword: z.string().min(1),
+    password: z.string().min(1),
+    passwordConfirm: z.string().min(1),
+  })
+  .refine(data => data.password === data.passwordConfirm, {
+    message: "Passwords don't match",
+    path: ['confirm'],
+  });
+
+export const updatePassword = async (req: Request, res: Response) => {
+  const data = {
+    currentPassword: req.body.currentPassword,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+  };
+
+  try {
+    passwordsSchema.parse(data);
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(400).json({ message: "This user doesn't exist" });
+    }
+
+    const isPasswordValid = await Encrypt.comparePassword(data.currentPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Incorrect password' });
+    }
+
+    const newPassword = await Encrypt.cryptPassword(data.password);
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).send();
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
