@@ -49,4 +49,10 @@ router.delete(
   usersController.deleteAvatar
 );
 
+router.put(
+  '/:id/info',
+  passport.authenticate('jwt', { session: false }),
+  usersController.updateInfo
+);
+
 export default router;

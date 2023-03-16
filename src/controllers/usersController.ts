@@ -1,7 +1,8 @@
 import { type Request, type Response } from 'express';
-import User from '../models/User';
+import User, { IUserModel } from '../models/User';
 import formidable from 'formidable';
 import cloudinary from '../lib/cloudinary';
+import { z } from 'zod';
 
 export const getProfile = (req: Request, res: Response) => {
   return res.status(200).json(req.user);
@@ -146,6 +147,53 @@ export const updateAvatar = async (req: Request, res: Response) => {
 
 export const deleteAvatar = (req: Request, res: Response) => {
   User.findByIdAndUpdate(req.params.id, { $unset: { avatar: 1 } })
+    .then(() => {
+      return res.status(200).send();
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
+const infoSchema = z.object({
+  publicName: z.string(),
+  description: z.string(),
+});
+
+const usernameSchema = z
+  .string()
+  .trim()
+  .min(1, { message: 'Username is required' })
+  .refine(
+    async val => {
+      const user = await User.findOne({ username: val });
+      return user === null;
+    },
+    {
+      message: 'User with this name already exists',
+    }
+  );
+
+export const updateInfo = async (req: Request, res: Response) => {
+  try {
+    infoSchema.parse({
+      publicName: req.body.name,
+      description: req.body.description,
+    });
+    if (req.body.username !== (req?.user as IUserModel)?.username) {
+      await usernameSchema.parseAsync(req.body.username);
+    }
+  } catch (err) {
+    return res.status(400).json(err);
+  }
+
+  User.findByIdAndUpdate(req.params.id, {
+    $set: {
+      username: req.body.username,
+      publicName: req.body.name,
+      description: req.body.description,
+    },
+  })
     .then(() => {
       return res.status(200).send();
     })
