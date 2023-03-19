@@ -17,6 +17,8 @@ router.get('/', usersController.getAll);
 
 router.get('/:username', usersController.getUser);
 
+router.get('/:username/feed', postsController.getFeed);
+
 router.get('/:username/saved', postsController.getUserSavedPosts);
 
 router.put(
