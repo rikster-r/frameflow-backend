@@ -115,7 +115,7 @@ export const createPost = async (req: Request, res: Response) => {
 
 export const getOne = (req: Request, res: Response) => {
   Post.findById(req.params.id)
-    .populate('author')
+    .populate('author likedBy')
     .then(post => {
       return res.status(200).json(post);
     })
