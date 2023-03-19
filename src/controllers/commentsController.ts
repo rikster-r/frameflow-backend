@@ -7,7 +7,7 @@ const commentSchema = z.string().trim().min(1);
 
 export const getPostComments = (req: Request, res: Response) => {
   Comment.find({ post: req.params.id })
-    .populate('author')
+    .populate('author likedBy')
     .sort({ createdAt: 'descending' })
     .then(comments => {
       return res.status(200).json(comments);

@@ -34,6 +34,7 @@ export const getAll = (req: Request, res: Response) => {
 
 export const getUser = (req: Request, res: Response) => {
   User.findOne({ username: req.params.username })
+    .populate('follows')
     .then(user => {
       return res.status(200).json(user);
     })
