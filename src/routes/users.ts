@@ -17,6 +17,8 @@ router.get('/', usersController.getAll);
 
 router.get('/:username', usersController.getUser);
 
+router.get('/:id/notifications', usersController.getNotifications);
+
 router.get('/:username/feed', postsController.getFeed);
 
 router.get('/:username/saved', postsController.getUserSavedPosts);
@@ -31,7 +33,11 @@ router.get('/:username/followers', usersController.getFollowers);
 
 router.get('/:username/following', usersController.getFollowing);
 
-router.put('/:id/follows', usersController.updateFollowsList);
+router.put(
+  '/:id/follows',
+  passport.authenticate('jwt', { session: false }),
+  usersController.updateFollowsList
+);
 
 router.get('/:username/posts', postsController.getUserPosts);
 

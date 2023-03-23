@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express';
 import Post from '../models/Post';
 import User from '../models/User';
+import Notification from '../models/Notification';
 import formidable from 'formidable';
 import cloudinary from '../lib/cloudinary';
 import { IUserModel } from '../models/User';
@@ -146,14 +147,35 @@ export const getLikes = (req: Request, res: Response) => {
     });
 };
 
-export const updatePostLikesField = (req: Request, res: Response) => {
-  Post.findByIdAndUpdate(req.params.id, { likedBy: req.body.likedBy })
-    .then(data => {
-      return res.status(200).json(data);
-    })
-    .catch(err => {
-      return res.status(500).json(err);
-    });
+export const updatePostLikesField = async (req: Request, res: Response) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) return res.status(404).json({ message: "This post doesn't exist" });
+    if (!req.user) return res.status(401).send();
+
+    const notificationFields = {
+      to: post.author._id,
+      from: (req.user as IUserModel)._id,
+      action: 'Like',
+      data: {
+        likedPost: post,
+      },
+    };
+
+    if (req.body.likedBy.length > post.likedBy.length) {
+      await Notification.create(notificationFields);
+    } else {
+      await Notification.deleteOne(notificationFields);
+    }
+
+    post.likedBy = req.body.likedBy;
+    await post.save();
+
+    return res.status(200).send();
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
 export const getUserPosts = async (req: Request, res: Response) => {

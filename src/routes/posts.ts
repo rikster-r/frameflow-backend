@@ -14,7 +14,11 @@ router.get('/:id', postsController.getOne);
 router.delete('/:id', postsController.deleteOne);
 
 router.get('/:id/likes', postsController.getLikes);
-router.put('/:id/likes', postsController.updatePostLikesField);
+router.put(
+  '/:id/likes',
+  passport.authenticate('jwt', { session: false }),
+  postsController.updatePostLikesField
+);
 
 router.get('/:id/comments', commentsController.getPostComments);
 router.post(

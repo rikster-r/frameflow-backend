@@ -1,5 +1,6 @@
 import { type Request, type Response } from 'express';
 import User, { IUserModel } from '../models/User';
+import Notification from '../models/Notification';
 import formidable from 'formidable';
 import cloudinary from '../lib/cloudinary';
 import { z } from 'zod';
@@ -77,14 +78,35 @@ export const updateSavedList = (req: Request, res: Response) => {
     });
 };
 
-export const updateFollowsList = (req: Request, res: Response) => {
-  User.findByIdAndUpdate(req.params.id, { follows: req.body.follows })
-    .then(data => {
-      return res.status(200).json(data);
-    })
-    .catch(err => {
-      return res.status(500).json(err);
-    });
+export const updateFollowsList = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) return res.status(404).json({ message: "This user doesn't exist" });
+    if (!req.user) return res.status(401).send();
+
+    const notificationFields = {
+      to:
+        req.body.follows.length > user.follows.length
+          ? req.body.follows.at(-1)
+          : user.follows.at(-1),
+      from: (req.user as IUserModel)._id,
+      action: 'Follow',
+    };
+
+    if (req.body.follows.length > user.follows.length) {
+      await Notification.create(notificationFields);
+    } else {
+      await Notification.deleteOne(notificationFields);
+    }
+
+    user.follows = req.body.follows;
+    await user.save();
+
+    return res.status(200).send();
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
 
 export const getVisited = (req: Request, res: Response) => {
@@ -248,4 +270,18 @@ export const updatePassword = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(500).json(err);
   }
+};
+
+export const getNotifications = (req: Request, res: Response) => {
+  Notification.find({ to: req.params.id })
+    .populate({
+      path: 'to from data.likedPost',
+    })
+    .sort({ createdAt: 'descending' })
+    .then(async data => {
+      return res.status(200).json(data);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
 };
