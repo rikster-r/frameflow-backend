@@ -7,20 +7,6 @@ import cloudinary from '../lib/cloudinary';
 import { IUserModel } from '../models/User';
 import { z } from 'zod';
 
-const fieldsSchema = z.object({
-  captionSchema: z.optional(z.string().trim()),
-  images: z
-    .any()
-    .array()
-    .min(1, { message: 'At least one image is required' })
-    .max(9, { message: 'More than 9 images is not allowed' })
-    .refine(
-      images =>
-        images.every(image => image.mimetype === 'image/png' || image.mimetype === 'image/jpeg'),
-      { message: 'Invalid file type. Only PNG and JPEG images are supported' }
-    ),
-});
-
 export const getAll = (req: Request, res: Response) => {
   Post.find()
     .then(posts => {
@@ -48,12 +34,28 @@ export const getLatest = (req: Request, res: Response) => {
     });
 };
 
+const fieldsSchema = z.object({
+  text: z.optional(z.string().trim()),
+  location: z.string().trim(),
+  images: z
+    .any()
+    .array()
+    .min(1, { message: 'At least one image is required' })
+    .max(9, { message: 'More than 9 images is not allowed' })
+    .refine(
+      images =>
+        images.every(image => image.mimetype === 'image/png' || image.mimetype === 'image/jpeg'),
+      { message: 'Invalid file type. Only PNG and JPEG images are supported' }
+    ),
+});
+
 export const createPost = async (req: Request, res: Response) => {
   const form = formidable({ multiples: true });
 
   // parse files
   const fields: {
     text: string;
+    location: string;
     images: formidable.File[];
   } = await new Promise(function (resolve, reject) {
     form.parse(req, (err, fields, files) => {
@@ -66,6 +68,7 @@ export const createPost = async (req: Request, res: Response) => {
 
       resolve({
         text: fields.text as string,
+        location: fields.location as string,
         images,
       });
     });
@@ -101,6 +104,7 @@ export const createPost = async (req: Request, res: Response) => {
     author: (req.user as IUserModel)._id,
     images: imageUrls,
     text: fields.text ?? '',
+    location: fields.location ?? '',
     likedBy: [],
   });
 

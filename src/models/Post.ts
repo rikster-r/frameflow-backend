@@ -5,6 +5,7 @@ interface IPost {
   images: string[];
   text: string;
   likedBy: Types.ObjectId[];
+  location: string;
 }
 
 export interface IPostModel extends IPost, Document {}
@@ -15,6 +16,7 @@ const PostSchema = new Schema<IPost>(
     images: [{ type: String, required: true }],
     text: { type: String },
     likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    location: { type: String },
   },
   { timestamps: true }
 );
