@@ -159,7 +159,7 @@ export const updatePostLikesField = async (req: Request, res: Response) => {
       from: (req.user as IUserModel)._id,
       action: 'Like',
       data: {
-        likedPost: post,
+        likedPost: post._id,
       },
     };
 
