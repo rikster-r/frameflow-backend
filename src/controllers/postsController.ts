@@ -91,7 +91,7 @@ export const createPost = async (req: Request, res: Response) => {
           public_id: image.newFilename,
         })
         .then(result => {
-          return result.url;
+          return result.secure_url;
         })
         .catch(err => {
           return res.status(500).json(err);

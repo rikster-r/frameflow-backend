@@ -154,7 +154,7 @@ export const updateAvatar = async (req: Request, res: Response) => {
       public_id: avatar.newFilename,
     })
     .then(result => {
-      return result.url;
+      return result.secure_url;
     })
     .catch(err => {
       return res.status(500).json(err);
