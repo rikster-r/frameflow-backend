@@ -167,14 +167,18 @@ export const updatePostLikesField = async (req: Request, res: Response) => {
       },
     };
 
+    const promises = [];
+
     if (req.body.likedBy.length > post.likedBy.length) {
-      await Notification.create(notificationFields);
+      promises.push(Notification.create(notificationFields));
     } else {
-      await Notification.deleteOne(notificationFields);
+      promises.push(Notification.deleteOne(notificationFields));
     }
 
     post.likedBy = req.body.likedBy;
-    await post.save();
+    promises.push(post.save());
+
+    await Promise.all(promises);
 
     return res.status(200).send();
   } catch (err) {

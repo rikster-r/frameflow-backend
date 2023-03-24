@@ -94,14 +94,18 @@ export const updateFollowsList = async (req: Request, res: Response) => {
       action: 'Follow',
     };
 
+    const promises = [];
+
     if (req.body.follows.length > user.follows.length) {
-      await Notification.create(notificationFields);
+      promises.push(Notification.create(notificationFields));
     } else {
-      await Notification.deleteOne(notificationFields);
+      promises.push(Notification.deleteOne(notificationFields));
     }
 
     user.follows = req.body.follows;
-    await user.save();
+    promises.push(user.save());
+
+    await Promise.all(promises);
 
     return res.status(200).send();
   } catch (err) {
