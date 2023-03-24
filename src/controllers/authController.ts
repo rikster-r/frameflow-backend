@@ -1,8 +1,8 @@
 import { type Request, type Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
-import Encrypt from '../lib/encrypt';
-import User from '../models/User';
+import Encrypt from '../lib/encrypt.js';
+import User from '../models/User.js';
 import passport from 'passport';
 
 const loginSchema = z.object({

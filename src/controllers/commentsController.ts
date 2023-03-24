@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
-import Comment from '../models/Comment';
-import { IUserModel } from '../models/User';
+import Comment from '../models/Comment.js';
+import { IUserModel } from '../models/User.js';
 import { z } from 'zod';
 
 const commentSchema = z.string().trim().min(1);

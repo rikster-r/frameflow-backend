@@ -1,5 +1,4 @@
 import express, { type Request, type Response } from 'express';
-import path from 'path';
 import cookieParser from 'cookie-parser';
 import createError, { type HttpError } from 'http-errors';
 import logger from 'morgan';
@@ -20,7 +19,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 //Mongo DB connection
 import mongoose from 'mongoose';
@@ -30,13 +28,13 @@ mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection 
 //passport setup
 import passport from 'passport';
 app.use(passport.initialize());
-require('./lib/passport');
+import './lib/passport.js';
 
 // routes
-import usersRouter from './routes/users';
-import authRouter from './routes/auth';
-import postsRouter from './routes/posts';
-import commentsRouter from './routes/comments';
+import usersRouter from './routes/users.js';
+import authRouter from './routes/auth.js';
+import postsRouter from './routes/posts.js';
+import commentsRouter from './routes/comments.js';
 
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);

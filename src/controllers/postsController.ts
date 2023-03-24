@@ -1,10 +1,10 @@
 import { type Request, type Response } from 'express';
-import Post from '../models/Post';
-import User from '../models/User';
-import Notification from '../models/Notification';
+import Post from '../models/Post.js';
+import User from '../models/User.js';
+import Notification from '../models/Notification.js';
 import formidable from 'formidable';
-import cloudinary from '../lib/cloudinary';
-import { IUserModel } from '../models/User';
+import cloudinary from '../lib/cloudinary.js';
+import { IUserModel } from '../models/User.js';
 import { z } from 'zod';
 
 export const getAll = (req: Request, res: Response) => {

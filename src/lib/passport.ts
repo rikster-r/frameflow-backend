@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import User, { IUserModel } from '../models/User';
-import Encrypt from './encrypt';
+import User, { IUserModel } from '../models/User.js';
+import Encrypt from './encrypt.js';
 import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
 
 passport.use(

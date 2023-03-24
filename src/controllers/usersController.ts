@@ -1,10 +1,10 @@
 import { type Request, type Response } from 'express';
-import User, { IUserModel } from '../models/User';
-import Notification from '../models/Notification';
+import User, { IUserModel } from '../models/User.js';
+import Notification from '../models/Notification.js';
 import formidable from 'formidable';
-import cloudinary from '../lib/cloudinary';
+import cloudinary from '../lib/cloudinary.js';
 import { z } from 'zod';
-import Encrypt from '../lib/encrypt';
+import Encrypt from '../lib/encrypt.js';
 
 export const getProfile = (req: Request, res: Response) => {
   return res.status(200).json(req.user);

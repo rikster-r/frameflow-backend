@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-import app from './app';
+import app from './app.js';
 import debug from 'debug';
 debug('frameflow-backend:server');
 import http from 'http';

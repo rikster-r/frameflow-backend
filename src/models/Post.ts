@@ -1,4 +1,5 @@
-import { Schema, models, model, Types, type Model, type Document } from 'mongoose';
+import mongoose, { type Types, type Model, type Document } from 'mongoose';
+const { Schema, models, model } = mongoose;
 
 interface IPost {
   author: Types.ObjectId;
