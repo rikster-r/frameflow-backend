@@ -4,6 +4,8 @@ import { z } from 'zod';
 import Encrypt from '../lib/encrypt.js';
 import User from '../models/User.js';
 import passport from 'passport';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const loginSchema = z.object({
   username: z.string().trim().min(1, { message: 'Username is required' }),
@@ -77,7 +79,7 @@ export const login = (req: Request, res: Response) => {
       }
 
       // generate a signed json web token with the contents of user object and return it in the response
-      const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET as string);
+      const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET);
       return res.json({ token });
     });
   })(req, res);
@@ -112,7 +114,7 @@ export const register = async (req: Request, res: Response) => {
         }
 
         // generate a signed json web token with the contents of user object and return it in the response
-        const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET as string);
+        const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET);
         return res.status(201).json({ token });
       });
     })

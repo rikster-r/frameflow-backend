@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 //Mongo DB connection
 import mongoose from 'mongoose';
-mongoose.connect(process.env.MONGODB_URI as string);
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //passport setup
