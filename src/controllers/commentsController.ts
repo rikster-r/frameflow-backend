@@ -17,6 +17,17 @@ export const getPostComments = (req: Request, res: Response) => {
     });
 };
 
+export const getOne = (req: Request, res: Response) => {
+  Comment.findById(req.params.id)
+    .populate('author likedBy')
+    .then(comment => {
+      return res.status(200).json(comment);
+    })
+    .catch(err => {
+      return res.status(500).json(err);
+    });
+};
+
 export const addComment = async (req: Request, res: Response) => {
   try {
     commentSchema.parse(req.body.text);
