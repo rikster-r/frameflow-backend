@@ -1,0 +1,9 @@
+#dependencies
+node_modules
+
+#build
+dist
+
+#env variables
+.env
+.env*.local
